@@ -1,0 +1,84 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: pihole-deploy
+  namespace: pihole
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pihole
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      {{- if .Values.deployOnControlPlane }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: In
+                values:
+                - "true"
+      tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      {{- end }}
+      volumes:
+      - name: {{ .Values.localPathPVCName }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.localPathPVCName }}
+      dnsPolicy: ClusterFirst
+      containers:
+        - name: pihole
+          image: pihole/pihole:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: "{{ .Values.timezone }}"
+            - name: WEBPASSWORD
+              value: "{{ .Values.webPassword }}"
+          volumeMounts:
+          - name: {{ .Values.localPathPVCName }}
+            mountPath: /etc/pihole
+          ports:
+            - name: dns-tcp
+              containerPort: 53
+              protocol: TCP
+            - name: dns-udp
+              containerPort: 53
+              protocol: UDP
+            - name: dchp
+              containerPort: 67
+              protocol: UDP
+            - name: web
+              containerPort: 80
+              protocol: TCP
+            # - name: https
+            #   containerPort: 443
+            #   protocol: TCP
+          readinessProbe:
+            exec:
+              command: ['dig', '@127.0.0.1', 'cnn.com']
+            timeoutSeconds: 20
+            initialDelaySeconds: 5
+            periodSeconds: 60
+          livenessProbe:
+            tcpSocket:
+              port: dns-tcp
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 2Gi
+              cpu: 1

@@ -1,0 +1,9 @@
+deployOnControlPlane: true
+
+localPathPVCName: "pihole-local-path-pvc"
+
+piHoleHostname: pi.ho
+
+timezone: "America/Toronto"
+
+webPassword: "admin"
