@@ -1,11 +1,10 @@
 name: Lint and Test Charts
 
 on:
-  pull_request:
-    types:
-      - opened
+  push:
     branches:
       - main
+      - feature/**
 
 jobs:
   lint-chart:
