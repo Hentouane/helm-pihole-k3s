@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  pihole-k3s:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-10-27T20:46:14.34346428Z"
+    description: A Helm chart for Kubernetes
+    digest: 9374d62bfb4d1249277794b9cf462488d71d1f6c6af3db622d408be89d37a634
+    name: pihole-k3s
+    type: application
+    urls:
+    - https://github.com/Hentouane/helm-pihole-k3s/releases/download/pihole-k3s-0.1.1/pihole-k3s-0.1.1.tgz
+    version: 0.1.1
+generated: "2024-10-27T20:46:14.343470782Z"
