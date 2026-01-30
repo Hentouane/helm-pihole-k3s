@@ -2,7 +2,7 @@
 A simple helm chart to deploy a pihole inside a k3s cluster. Can be used as an external DNS server.
 
 ## Pre-requesite
-Uses ingress-nginx for it's ingress. Leave value piHoleHostname empty if not needed.
+Uses traefik for it's ingress. Leave value piHoleHostname empty if not needed.
 
 ## Installation
 Run command:
